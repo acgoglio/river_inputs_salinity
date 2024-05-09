@@ -8,5 +8,7 @@
  ncrename -h -O -v s_river,clim_daily_salinity /work/oda/med_dev/river_inputs_salinity/new_river_inputs/runoff_1d365_nomask.nc
  # 4) run the code to produce the new field
  bsub -q s_short -n 1 -P 0510 -Is python efas_salinity.py
- # 5) rename the outfile to be red by NEMO
+ # 5) rename the outfile to be red by NEMO (WARNING: change the year in the outfile name!!!)
  mv /work/oda/med_dev/river_inputs_salinity/new_river_inputs/runoff_1d365_nomask.nc /work/oda/med_dev/river_inputs_salinity/new_river_inputs/runoff_1d_nomask_y2017.nc
+ # 6) move the plots to the workdir
+mv *.png /work/oda/med_dev/river_inputs_salinity/new_river_inputs/river_plots/

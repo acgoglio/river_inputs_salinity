@@ -50,7 +50,7 @@ from glob import glob # * and ? in strings in py
 workdir='/work/oda/med_dev/river_inputs_salinity/new_river_inputs/'
 
 # Year infos
-yeartocompute=int(2017)
+yeartocompute=int(2019)
 days_of_year=int(365)
 
 # input files infos:
@@ -242,10 +242,26 @@ oldout=output_daily.variables[pre_runoff_var][:]
 newout=output_daily.variables[runoff_var][:]
 oldsout=output_daily.variables[pre_salinity_var][:]
 newsout=output_daily.variables[salinity_var][:]
+# Mean
+mean_newout=np.nanmean(newout)
+mean_oldout=np.nanmean(oldout)
+mean_newsout=np.nanmean(newsout)
+mean_oldsout=np.nanmean(oldsout)
+print ('means r',mean_newout,mean_oldout)
+print ('means s',mean_newsout,mean_oldsout)
+mean_newout=str(np.round(np.nanmean(newout),3))
+mean_oldout=str(np.round(np.nanmean(oldout),3))
+mean_newsout=str(np.round(np.nanmean(newsout),1))
+mean_oldsout=str(np.round(np.nanmean(oldsout),1))
+print ('means r',mean_newout,mean_oldout)
+print ('means s',mean_newsout,mean_oldsout)
+# diff
 diff=newout-oldout
 sdiff=newsout-oldsout
+# std
 std_diff=np.std(diff)
 std_sdiff=np.std(sdiff)
+
 # Build date array
 start_date = date(yeartocompute, 1, 1)
 end_date = date(yeartocompute+1, 1, 1)-timedelta(days=1)
@@ -265,15 +281,15 @@ with open(csv_infofile) as infile:
          #
          plt.subplot(2,1,1)
          plt.title ('Climatological river forcing Vs EFAS river forcing --- River: '+river_name+'--- Year: '+str(yeartocompute)) 
-         plt.plot(daterange,oldout[:,int(river_lat_idx),int(river_lon_idx)],'-o',label = 'Clim river forcing')
-         plt.plot(daterange,newout[:,int(river_lat_idx),int(river_lon_idx)],'-o',label = 'EFAS river forcing')
+         plt.plot(daterange,oldout[:,int(river_lat_idx),int(river_lon_idx)],'-o',label = 'Clim river forcing (AVG='+str(np.round(np.nanmean(oldout[:,int(river_lat_idx),int(river_lon_idx)]),3))+' kg/m2/s)')
+         plt.plot(daterange,newout[:,int(river_lat_idx),int(river_lon_idx)],'-o',label = 'EFAS river forcing (AVG='+str(np.round(np.nanmean(newout[:,int(river_lat_idx),int(river_lon_idx)]),3))+' kg/m2/s)')
          plt.grid ()
          plt.ylabel ('River runoff [kg/m2/s]')
          plt.xlabel ('Date')
          plt.legend()
          #
          plt.subplot(2,1,2)
-         plt.plot(daterange,diff[:,int(river_lat_idx),int(river_lon_idx)],label = 'EFAS-Clim (STD DEV: '+str(std_diff)+')')
+         plt.plot(daterange,diff[:,int(river_lat_idx),int(river_lon_idx)],label = 'EFAS-Clim (STD DEV: '+str(np.round(np.std(diff[:,int(river_lat_idx),int(river_lon_idx)]),5))+')')
          plt.grid ()
          plt.ylabel ('River runoff difference [kg/m2/s]')
          plt.xlabel ('Date')
@@ -289,15 +305,15 @@ with open(csv_infofile) as infile:
          #
          plt.subplot(2,1,1)
          plt.title ('Climatological river forcing Vs EFAS river forcing --- River: '+river_name+'--- Year: '+str(yeartocompute))
-         plt.plot(daterange,oldsout[:,int(river_lat_idx),int(river_lon_idx)],'-o',label = 'Clim river forcing')
-         plt.plot(daterange,newsout[:,int(river_lat_idx),int(river_lon_idx)],'-o',label = 'EFAS river forcing')
+         plt.plot(daterange,oldsout[:,int(river_lat_idx),int(river_lon_idx)],'-o',label = 'Clim river forcing (AVG='+str(np.round(np.nanmean(oldsout[:,int(river_lat_idx),int(river_lon_idx)]),3))+' PSU)')
+         plt.plot(daterange,newsout[:,int(river_lat_idx),int(river_lon_idx)],'-o',label = 'EFAS river forcing (AVG='+str(np.round(np.nanmean(newsout[:,int(river_lat_idx),int(river_lon_idx)]),3))+' PSU)')
          plt.grid ()
          plt.ylabel ('River salinity [PSU]')
          plt.xlabel ('Date')
          plt.legend()
          #
          plt.subplot(2,1,2)
-         plt.plot(daterange,sdiff[:,int(river_lat_idx),int(river_lon_idx)],label = 'EFAS-Clim (STD DEV: '+str(std_sdiff)+')')
+         plt.plot(daterange,sdiff[:,int(river_lat_idx),int(river_lon_idx)],label = 'EFAS-Clim (STD DEV: '+str(np.round(np.std(sdiff[:,int(river_lat_idx),int(river_lon_idx)]),5))+')')
          plt.grid ()
          plt.ylabel ('River salinity difference [PSU]')
          plt.xlabel ('Date')
